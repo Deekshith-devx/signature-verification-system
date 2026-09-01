@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Signature Verification</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-body">
+    <div class="stars"></div>
+    <div class="glowing-orb orb-1"></div>
+    <div class="glowing-orb orb-2"></div>
+    
+    <div class="login-container">
+        <div class="login-card">
+            <div class="brand">
+                <i class="fa-solid fa-signature brand-icon"></i>
+                <h1>Sign<span>Guard</span></h1>
+                <p>Secure Admin Portal</p>
+            </div>
+            
+            {% if error %}
+            <div class="alert alert-error">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+            
+            <form action="{{ url_for('login') }}" method="POST" class="login-form">
+                <div class="input-group">
+                    <i class="fa-solid fa-user input-icon"></i>
+                    <input type="text" id="username" name="username" required placeholder=" ">
+                    <label for="username">Username</label>
+                    <div class="input-line"></div>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    <input type="password" id="password" name="password" required placeholder=" ">
+                    <label for="password">Password</label>
+                    <div class="input-line"></div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">
+                    <span>Login to Portal</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <p><i class="fa-solid fa-shield-halved"></i> Authorized Personnel Only</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

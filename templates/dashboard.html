@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Signature Verification</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dashboard-body">
+    <div class="stars"></div>
+    <div class="glowing-orb orb-1"></div>
+    <div class="glowing-orb orb-3"></div>
+
+    <header class="dashboard-header">
+        <div class="header-brand">
+            <i class="fa-solid fa-signature brand-icon"></i>
+            <h1>Sign<span>Guard</span></h1>
+            <span class="badge">Admin Portal</span>
+        </div>
+        
+        <div class="header-actions">
+            <div class="user-profile">
+                <i class="fa-solid fa-circle-user"></i>
+                <span>Administrator</span>
+            </div>
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="dashboard-content">
+        <div class="grid-layout">
+            <!-- Left Panel: Verification & Registration Forms -->
+            <section class="panel panel-left">
+                <div class="panel-tabs">
+                    <button class="tab-btn active" id="tabVerify"><i class="fa-solid fa-shield-halved"></i> Verify</button>
+                    <button class="tab-btn" id="tabRegister"><i class="fa-solid fa-user-plus"></i> Register</button>
+                </div>
+
+                <!-- Tab 1: Verification Form -->
+                <div id="verifyTabContent" class="tab-content">
+                    <div class="panel-header">
+                        <h2>Verification Specimen</h2>
+                        <p>Enter Unique User ID and upload signature specimen for cross-verification.</p>
+                    </div>
+                    
+                    <form id="verifyForm" class="verification-form">
+                        <div class="form-group">
+                            <label for="uid" class="form-label">Unique User ID Number</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-id-card input-prefix-icon"></i>
+                                <input type="text" id="uid" name="uid" class="form-control" required placeholder="e.g., 23456" autocomplete="off">
+                            </div>
+                            <small class="form-help">Unique ID associated with the registered signature profile (e.g. 23456, 78901, 11223).</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Signature specimen</label>
+                            <div id="dropZone" class="drop-zone">
+                                <div class="drop-zone-content">
+                                    <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                                    <h3>Drag & drop signature image here</h3>
+                                    <p>or click to select a file from your device</p>
+                                    <span class="file-limits">Supports PNG, JPG, JPEG (Max 5MB)</span>
+                                </div>
+                                <input type="file" id="signatureFile" name="signature" accept="image/*" class="file-input" required>
+                                <div id="previewContainer" class="preview-container hidden">
+                                    <img id="imagePreview" src="" alt="Specimen Preview">
+                                    <button type="button" id="removeFileBtn" class="btn-remove"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" id="submitBtn" class="btn btn-primary btn-block">
+                            <i class="fa-solid fa-circle-notch fa-spin btn-spinner hidden" id="spinner"></i>
+                            <span id="btnText">Verify Specimen</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Tab 2: Registration Form -->
+                <div id="registerTabContent" class="tab-content hidden">
+                    <div class="panel-header">
+                        <h2>Register New Profile</h2>
+                        <p>Create a new registered user profile and upload their reference signature.</p>
+                    </div>
+                    
+                    <!-- Alert box specifically for registration results -->
+                    <div id="registerAlert" class="alert hidden">
+                        <i class="fa-solid" id="registerAlertIcon"></i>
+                        <span id="registerAlertMsg">Alert message</span>
+                    </div>
+
+                    <form id="registerForm" class="verification-form">
+                        <div class="form-group">
+                            <label for="regUid" class="form-label">New Unique ID Number</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-fingerprint input-prefix-icon"></i>
+                                <input type="text" id="regUid" name="uid" class="form-control"  autocomplete="off"
+                inputmode="numeric"
+                pattern="[0-9]{5,7}"
+                minlength="5"
+                maxlength="7"required placeholder="e.g., 55555" autocomplete="off">
+                            </div>
+                            <small class="form-help">Enter a new unique number sequence for this user.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regName" class="form-label">Full Name</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-user-tag input-prefix-icon"></i>
+                                <input type="text" id="regName" name="name" class="form-control" required placeholder="e.g., Charlie Brown" autocomplete="off">
+                            </div>
+                            <small class="form-help">User's registered full name.</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Reference Signature Specimen</label>
+                            <div id="regDropZone" class="drop-zone">
+                                <div class="drop-zone-content">
+                                    <i class="fa-solid fa-file-signature drop-icon"></i>
+                                    <h3>Drag & drop signature image here</h3>
+                                    <p>or click to select reference signature</p>
+                                    <span class="file-limits">Supports PNG, JPG, JPEG (Max 5MB)</span>
+                                </div>
+                                <input type="file" id="regSignatureFile" name="signature" accept="image/*" class="file-input" required>
+                                <div id="regPreviewContainer" class="preview-container hidden">
+                                    <img id="regImagePreview" src="" alt="Reference Preview">
+                                    <button type="button" id="regRemoveFileBtn" class="btn-remove"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" id="regSubmitBtn" class="btn btn-primary btn-block">
+                            <i class="fa-solid fa-circle-notch fa-spin btn-spinner hidden" id="regSpinner"></i>
+                            <span id="regBtnText">Register Profile</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+            
+            <!-- Right Panel: Results Display -->
+            <section class="panel panel-right">
+                <!-- Welcome/Instructional view -->
+                <div id="resultsWelcome" class="results-welcome">
+                    <div class="welcome-graphics">
+                        <div class="scanner-line animate-scanner"></div>
+                        <i class="fa-solid fa-fingerprint welcome-icon"></i>
+                    </div>
+                    <h3>Ready for Verification</h3>
+                    <p>Enter details on the left and start verification. SignaGuard will analyze structural features, contours, and keypoints to calculate matching scores.</p>
+                </div>
+                
+                <!-- Matching Results Layout -->
+                <div id="resultsContent" class="results-content hidden">
+                    <div class="result-status-card" id="statusCard">
+                        <div class="status-icon" id="statusIcon">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="status-info">
+                            <h3 id="statusTitle">Verification Status</h3>
+                            <p id="statusMessage">Awaiting verification results...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="results-details-grid">
+                        <!-- Left: Side by side images comparison -->
+                        <div class="comparison-display-box">
+                            <h4>Signature Comparison Specimen</h4>
+                            <div class="comparison-container">
+                                <div class="image-box">
+                                    <span class="img-label">Reference</span>
+                                    <div class="img-wrapper">
+                                        <img id="refImage" src="" alt="Database Specimen">
+                                    </div>
+                                </div>
+                                <div class="image-box">
+                                    <span class="img-label">Query</span>
+                                    <div class="img-wrapper">
+                                        <img id="queryImage" src="" alt="Uploaded Specimen">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Analysis Overlay -->
+                            <div class="feature-match-container" id="featureMatchBox">
+                                <h5><i class="fa-solid fa-network-wired"></i> Feature Alignment Visualizer</h5>
+                                <p>Green lines represent verified keypoints overlapping between both specimen profiles.</p>
+                                <div class="comparison-full-wrapper">
+                                    <img id="comparisonOverlay" src="" alt="Feature Mapping Analysis">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right: Scores & Metrics -->
+                        <div class="scores-panel">
+                            <h4>Feature Analysis Metrics</h4>
+                            <div class="confidence-container">
+                                <div class="progress-ring-box">
+                                    <svg class="progress-ring" width="120" height="120">
+                                        <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.05)" stroke-width="8" fill="transparent" r="50" cx="60" cy="60"/>
+                                        <circle class="progress-ring__circle" stroke="#8a2be2" stroke-width="8" fill="transparent" r="50" cx="60" cy="60" id="progressRing"/>
+                                    </svg>
+                                    <div class="progress-ring-text">
+                                        <span id="scorePercentage">0%</span>
+                                        <small>Confidence</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="metrics-list">
+                                <div class="metric-item">
+                                    <div class="metric-info">
+                                        <span>Structural Similarity (SSIM)</span>
+                                        <span id="ssimScore" class="metric-val">0%</span>
+                                    </div>
+                                    <div class="metric-bar-bg"><div class="metric-bar" id="ssimBar"></div></div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-info">
+                                        <span>Keypoint Matching (ORB)</span>
+                                        <span id="orbScore" class="metric-val">0%</span>
+                                    </div>
+                                    <div class="metric-bar-bg"><div class="metric-bar" id="orbBar"></div></div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-info">
+                                        <span>Correlation Coefficient (NCC)</span>
+                                        <span id="nccScore" class="metric-val">0%</span>
+                                    </div>
+                                    <div class="metric-bar-bg"><div class="metric-bar" id="nccBar"></div></div>
+                                </div>
+                            </div>
+                            
+                            <div class="detailed-metrics-footer" id="metricsMeta">
+                                <div><i class="fa-solid fa-code-commit"></i> Keypoints: <span id="metaKp">0 / 0</span></div>
+                                <div><i class="fa-solid fa-circle-check"></i> Good Matches: <span id="metaMatches">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="dashboard-footer-main">
+        <p>&copy; 2026 SignaGuard ML Engine. All rights reserved. Registered to Administrator.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
